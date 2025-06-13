@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SecureTik Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}">
+</head>
+<body>
+    <header class="dashboard-header">
+        <img src="{{ url_for('static', filename='images/header.png') }}" alt="Header Image" class="header-img">
+        <div class="dashboard-title">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo-small">
+            <h1>SecureTik Network Dashboard</h1>
+	    <a href="{{ url_for('routes.logout') }}" class="logout-btn">Logout</a>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <section class="dashboard-section">
+            <h2>Welcome, {{ user }}</h2>
+            <p>This is your network security dashboard.</p>
+            <div class="actions">
+                <button onclick="location.href='/alerts'">View Alerts</button>
+                <button onclick="location.href='/firewall-status'">Firewall Status</button>
+                <button onclick="location.href='/suricata-status'">Suricata Status</button>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

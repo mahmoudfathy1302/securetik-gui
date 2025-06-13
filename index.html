@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureTik Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            border-radius: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">SecureTik</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <h5 class="section-title">Firewall Rules</h5>
+                    <form id="firewall-form">
+                        <div class="mb-3">
+                            <label class="form-label">Source IP</label>
+                            <input type="text" class="form-control" name="src_ip">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Destination IP</label>
+                            <input type="text" class="form-control" name="dst_ip">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Action</label>
+                            <select class="form-select" name="action">
+                                <option value="ACCEPT">Accept</option>
+                                <option value="DROP">Drop</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Rule</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <h5 class="section-title">Suricata Alerts</h5>
+                    <div id="alerts-container">
+                        <p>Loading alerts...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Submit firewall rule
+        document.getElementById('firewall-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/firewall/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            alert(result.message);
+        });
+
+        // Load Suricata alerts
+        async function loadAlerts() {
+            const res = await fetch('/ids/alerts');
+            const alerts = await res.json();
+            const container = document.getElementById('alerts-container');
+            container.innerHTML = '';
+
+            alerts.slice(0, 5).forEach(alert => {
+                const div = document.createElement('div');
+                div.innerHTML = `<div class="alert alert-warning">${alert.timestamp}: ${alert.signature}</div>`;
+                container.appendChild(div);
+            });
+        }
+
+        loadAlerts();
+    </script>
+</body>
+</html>
